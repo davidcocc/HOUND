@@ -45,7 +45,7 @@ def audio_augmentation(audio, sample_rate):
     augmentations.append(pitch_shift)
 
     # Add time stretch
-    time_stretch = librosa.effects.time_stretch(audio, rate=np.random.uniform(0.8, 1.2))
+    time_stretch = librosa.effects.time_stretch(audio, rate=np.random.uniform(0.4, 1.8))
     augmentations.append(time_stretch)
 
     return augmentations
