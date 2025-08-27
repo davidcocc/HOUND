@@ -1,5 +1,7 @@
 import numpy as np
 import librosa
+import os
+import soundfile as sf
 
 
 def extract_mel_spectrogram(file_path: str, fixed_length: int = 168):
@@ -75,3 +77,19 @@ def extract_mel_spectrogram_from_audio(audio, sample_rate, fixed_length=168):
     except Exception as exc:
         print(f"❌ Error processing audio data: {exc}")
         return None
+
+def export_augmented_versions(input_file: str, output_dir: str) -> None:
+    _, sr, audio = extract_mel_spectrogram(input_file)
+    if audio is None:
+        print(f"❌ Failed to load audio from {input_file}")
+        return
+        
+    augmentations = audio_augmentation(audio, sr)
+    os.makedirs(output_dir, exist_ok=True)
+    base_name = os.path.splitext(os.path.basename(input_file))[0]
+    aug_types = ["noise", "pitch_shift", "time_stretch"]
+    
+    for i, aug_audio in enumerate(augmentations):
+        output_path = os.path.join(output_dir, f"{base_name}_{aug_types[i]}.wav")
+        sf.write(output_path, aug_audio, sr)
+        print(f"✅ Exported augmented audio to {output_path}")

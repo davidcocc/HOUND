@@ -14,7 +14,7 @@ from model_utils import (
     predict_file,
     evaluate_model,
 )
-from audio_utils import extract_mel_spectrogram, audio_augmentation
+from audio_utils import extract_mel_spectrogram, audio_augmentation, export_augmented_versions
 
 try:
     from IPython.display import Audio, display
@@ -73,7 +73,11 @@ def main():
         return
     predict_audio(args.file)
 
-    test_meta = metadata#[metadata["fold"] == 10]
+    # Export augmented versions
+    output_dir = os.path.join(_ROOT, "augmented")
+    export_augmented_versions(args.file, output_dir)
+
+    test_meta = metadata[metadata["fold"] == 2]
     test_files = [
         os.path.join(_ROOT, "data", "archive", f"fold{fold}", fname)
         for fold, fname in zip(test_meta["fold"], test_meta["slice_file_name"])
@@ -85,8 +89,8 @@ def main():
     # evaluate_model(model, test_files, test_labels)
     
     # Esegui valutazione sui dati augmentati
-    print("🔍 Valutazione modello sui dati augmentati...")
-    evaluate_model(model, test_files, test_labels, use_augmentation=True)
+    #print("🔍 Valutazione modello sui dati augmentati...")
+    #evaluate_model(model, test_files, test_labels, use_augmentation=True)
 
 if __name__ == "__main__":
     main()
