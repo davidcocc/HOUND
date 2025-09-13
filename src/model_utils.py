@@ -221,3 +221,54 @@ def evaluate_model(model, test_files, test_labels, use_augmentation=False):
         plt.show()
 
     return y_true, y_pred
+
+
+def get_model_summary(project_root: str, model_rel_path: str = os.path.join("model", "UrbanSound8K.keras")):
+    """
+    Print the summary of a Keras model.
+    
+    Args:
+        project_root: Root directory of the project
+        model_rel_path: Relative path to the model file
+    """
+    model = load_keras_model(project_root, model_rel_path)
+    model.summary()
+
+def evaluate_custom_vs_original(project_root: str, original_rel_path: str = os.path.join('model', 'UrbanSound8K.keras'),
+                                custom_rel_path: str = os.path.join('custom_model', 'custom_UrbanSound8K.keras')):
+    """
+    Evaluate and compare original and custom models on test data.
+    
+    Args:
+        project_root: Root directory of the project
+        original_rel_path: Relative path to original model
+        custom_rel_path: Relative path to custom model
+        
+    Returns:
+        Dict with accuracies
+    """
+    # Carica modelli
+    original_model = load_keras_model(project_root, model_rel_path=original_rel_path)
+    custom_model = load_keras_model(project_root, model_rel_path=custom_rel_path)
+    
+    metadata, _ = load_metadata(project_root)
+    test_meta = metadata[metadata['fold'] == 10]
+    test_files = [os.path.join(project_root, 'data', 'archive', f"fold{row['fold']}", row['slice_file_name']) 
+                for _, row in test_meta.iterrows()]
+    test_labels = test_meta['classID'].tolist()
+    
+    # Valuta originale
+    print("Valutazione modello originale:")
+    original_true, original_pred = evaluate_model(original_model, test_files, test_labels)
+    
+    # Valuta custom
+    print("Valutazione modello custom:")
+    custom_true, custom_pred = evaluate_model(custom_model, test_files, test_labels)
+    
+    # Confronto
+    from sklearn.metrics import accuracy_score
+    original_acc = accuracy_score(original_true, original_pred)
+    custom_acc = accuracy_score(custom_true, custom_pred)
+    print(f"\nConfronto:\nOriginale Accuracy: {original_acc:.4f}\nCustom Accuracy: {custom_acc:.4f}")
+    
+    return {'original_accuracy': original_acc, 'custom_accuracy': custom_acc}

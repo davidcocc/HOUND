@@ -26,6 +26,7 @@ _HERE = os.path.dirname(os.path.abspath(__file__))
 # Project root (one level up from src/)
 _ROOT = resolve_project_root(__file__)
 model = load_keras_model(_ROOT)
+# model = load_keras_model(_ROOT, os.path.join("custom_model", "custom_UrbanSound8K.keras")) MODELLO CUSTOM!
 
 
 # ✅ Load metadata & create class mapping
