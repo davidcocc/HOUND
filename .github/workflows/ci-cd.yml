@@ -165,6 +165,7 @@ jobs:
     permissions:
       contents: read
       id-token: write
+      attestations: write
 
     steps:
     - name: Checkout code
