@@ -22,7 +22,7 @@ alwaysApply: true
 ## Code Style
 - Follow **PEP8** for formatting and naming.
 - Use clear, descriptive variable and function names.
-- Keep consistency with the existing project style.
+- Keep consistency with the existing project style!
 - Add **docstrings** for all public functions and modules.
 - Comment ONLY non-trivial parts of the code (e.g., audio preprocessing, prediction mapping).
 
