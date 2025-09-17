@@ -18,6 +18,7 @@ from functools import lru_cache
 from typing import Dict, List, Optional, Tuple
 
 import gradio as gr
+import matplotlib.pyplot as plt
 
 try:
     from .model_utils import load_keras_model, load_metadata, predict_file
@@ -134,6 +135,29 @@ def classify(filepath: Optional[str], model_label: str) -> Tuple[str, Dict[str, 
     return message, label_probs
 
 
+def _generate_spectrogram(filepath: Optional[str]) -> Optional[plt.Figure]:
+    """Wrapper for generating a spectrogram Figure from an audio file path."""
+    if not filepath or not os.path.exists(filepath):
+        return None
+    # Lazy import to keep interface.py focused and testable
+    try:
+        from .utils import generate_mel_spectrogram_figure
+    except Exception:
+        from utils import generate_mel_spectrogram_figure
+    return generate_mel_spectrogram_figure(filepath)
+
+
+def _generate_probs_pie(probabilities: Dict[str, float]) -> Optional[plt.Figure]:
+    """Wrapper for creating a pie chart Figure from probabilities mapping."""
+    if not probabilities:
+        return None
+    try:
+        from .utils import generate_probabilities_pie
+    except Exception:
+        from utils import generate_probabilities_pie
+    return generate_probabilities_pie(probabilities)
+
+
 def build_interface() -> gr.Blocks:
     """Build and return the Gradio Blocks app using a dark, accessible theme."""
     options = get_model_options()
@@ -141,37 +165,59 @@ def build_interface() -> gr.Blocks:
 
     theme = gr.themes.Soft()
 
-    with gr.Blocks(theme=theme, title="UrbanSound Classifier") as demo:
+    with gr.Blocks(theme=theme, title="HOUND: High-fidelity Optimized Urban Noise Detection") as demo:
         gr.Markdown(
             """
-            ### UrbanSound8K Classifier
+            ### HOUND: High-fidelity Optimized Urban Noise Detection
             Upload or record an audio clip, choose a model, and run classification.
             """.strip()
         )
 
         with gr.Row():
             audio_in = gr.Audio(
-                sources=["microphone", "upload"],
+                sources=["upload"],  # remove microphone recording per requirements
                 type="filepath",
-                label="Audio (upload or record)",
+                label="Audio (upload)",
+                interactive=True,
             )
-            model_dd = gr.Dropdown(
-                choices=list(options.keys()) or [""],
-                value=default_choice,
-                label="Model",
-            )
+
+        # Model selection via buttons; default should prefer custom model
+        try:
+            from .utils import choose_default_model_label
+        except Exception:
+            from utils import choose_default_model_label
+        default_label = choose_default_model_label(options)
+
+        with gr.Row():
+            model_state = gr.State(default_label)
+            model_buttons = []
+            for label in options.keys():
+                btn = gr.Button(label, variant=("primary" if label == default_label else "secondary"))
+                model_buttons.append((label, btn))
+        selected_label = gr.Markdown(f"**Selected model:** {default_label}")
+
+        def _set_model(label: str):
+            # Return both state value and a small visual feedback
+            return label, f"**Selected model:** {label}"
+
+        for label, btn in model_buttons:
+            btn.click(lambda x=label: _set_model(x), outputs=[model_state, selected_label])
 
         run_btn = gr.Button("Classify", variant="primary")
 
         with gr.Row():
             pred_txt = gr.Textbox(label="Prediction", interactive=False)
-            prob_json = gr.JSON(label="Probabilities by class")
+        with gr.Row():
+            spec_plot = gr.Plot(label="Spectrogram")
+            pie_plot = gr.Plot(label="Class Probabilities")
 
-        def _on_click(file_path: Optional[str], model_choice: str):
-            msg, probs = classify(file_path, model_choice)
-            return msg, probs
+        def _on_click(file_path: Optional[str], chosen_label: str):
+            msg, probs = classify(file_path, chosen_label)
+            spec_fig = _generate_spectrogram(file_path)
+            pie_fig = _generate_probs_pie(probs)
+            return msg, spec_fig, pie_fig
 
-        run_btn.click(_on_click, inputs=[audio_in, model_dd], outputs=[pred_txt, prob_json])
+        run_btn.click(_on_click, inputs=[audio_in, model_state], outputs=[pred_txt, spec_plot, pie_plot])
 
         gr.Markdown(
             """
@@ -186,7 +232,6 @@ def build_interface() -> gr.Blocks:
 def main() -> None:
     """Launch the Gradio app."""
     demo = build_interface()
-    # Keep queue and defaults simple; avoid overengineering server options
     demo.queue().launch()
 
 

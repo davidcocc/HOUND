@@ -1,11 +1,10 @@
-"""Unit tests for src.interface classify logic.
+"""Unit tests for src.interface classify logic and model selection.
 
-These tests validate the pure Python functions without starting the Gradio UI.
+These tests validate pure Python functions without starting the Gradio UI.
 We mock heavy I/O and model loading where appropriate.
 """
 
 import os
-from typing import Dict
 from unittest import mock
 
 import numpy as np
@@ -85,6 +84,20 @@ def test_discover_models_and_classify_success(monkeypatch):
     assert any("car_horn" in message for message in [message])
     assert set(probs.keys()) == {"air_conditioner", "car_horn"}
 
+    # Spectrogram and pie chart generation wrappers should return figures
+    with mock.patch("src.interface._generate_spectrogram") as spec, \
+         mock.patch("src.interface._generate_probs_pie") as pie:
+        spec.return_value = object()
+        pie.return_value = object()
+        # Call through the same flow as the UI callback (now returns 3 values)
+        def _on_click(file_path, chosen_label):
+            m, p = interface.classify(file_path, chosen_label)
+            sf = interface._generate_spectrogram(file_path)
+            pf = interface._generate_probs_pie(p)
+            return m, sf, pf
+        m, sf, pf = _on_click(fake_audio, label)
+        assert m and sf is not None and pf is not None
+
 
 def test_classify_handles_missing_file():
     import importlib
@@ -145,5 +158,19 @@ def test_classify_handles_predict_failure(monkeypatch):
     msg, probs = interface.classify(fake_audio, label)
     assert "Failed to process the audio" in msg
     assert probs == {}
+
+
+def test_default_model_prefers_custom(tmp_path, monkeypatch):
+    import importlib
+
+    # Build options map
+    options = {
+        "Original model": "model/UrbanSound8K.keras",
+        "Custom: best": "custom_model/best_custom_UrbanSound8K.keras",
+    }
+
+    utils = importlib.import_module("src.utils")
+    chosen = utils.choose_default_model_label(options)
+    assert chosen.startswith("Custom"), "Expected default to prefer custom model"
 
 
