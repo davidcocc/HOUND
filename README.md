@@ -28,7 +28,7 @@ This project was developed as part of the Software Engineering for Artificial In
 ### Setup
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/hound.git
+   git clone https://github.com/davidcocc/hound.git
    cd hound
    ```
 
@@ -81,7 +81,7 @@ pytest --cov=src --cov-report=html --html=report.html
 
 ## Model Card
 ### Model Overview
-- **Name**: Custom UrbanSound8K CNN
+- **Name**: Hound
 - **Version**: 1.0
 - **Description**: A convolutional neural network fine-tuned on the UrbanSound8K dataset for classifying 10 urban sound classes (e.g., air_conditioner, car_horn).
 - **Architecture**: CNN with mel spectrogram inputs (168x168), trained with data augmentation (noise, pitch shift, time stretch).
