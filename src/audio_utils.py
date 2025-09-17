@@ -41,11 +41,11 @@ def audio_augmentation(audio, sample_rate):
     augmentations.append(augmented_audio)
 
     # Add pitch shift
-    pitch_shift = librosa.effects.pitch_shift(audio, sr=sample_rate, n_steps=np.random.randint(-2, 2))
+    pitch_shift = librosa.effects.pitch_shift(audio, sr=sample_rate, n_steps=np.random.randint(-1, 2))  # Narrowed from -2/2 to -1/1
     augmentations.append(pitch_shift)
 
     # Add time stretch
-    time_stretch = librosa.effects.time_stretch(audio, rate=np.random.uniform(0.4, 1.8))
+    time_stretch = librosa.effects.time_stretch(audio, rate=np.random.uniform(0.8, 1.2))  # Narrowed from 0.4/1.8 to 0.8/1.2
     augmentations.append(time_stretch)
 
     return augmentations
@@ -78,7 +78,7 @@ def extract_mel_spectrogram_from_audio(audio, sample_rate, fixed_length=168):
         print(f"❌ Error processing audio data: {exc}")
         return None
 
-def export_augmented_versions(input_file: str, output_dir: str) -> None:
+def export_augmented_versions(input_file: str, output_dir: str) -> None: # unused function for now
     _, sr, audio = extract_mel_spectrogram(input_file)
     if audio is None:
         print(f"❌ Failed to load audio from {input_file}")

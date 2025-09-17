@@ -9,6 +9,4 @@ This package provides utilities for:
 
 from . import audio_utils
 from . import model_utils
-from . import utils
-
-__all__ = ['audio_utils', 'model_utils', 'utils']
+__all__ = ['audio_utils', 'model_utils']

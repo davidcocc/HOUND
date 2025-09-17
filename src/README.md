@@ -4,9 +4,12 @@ Questo package fornisce utilità per la classificazione audio, organizzate in mo
 
 ## Struttura del Package
 
-### `utils.py`
-Funzioni di utilità generale:
-- `resolve_project_root()`: Risolve il percorso root del progetto
+### Root del progetto
+Per ottenere la root del progetto senza dipendenze esterne:
+```python
+import os
+project_root = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir))
+```
 
 ### `audio_utils.py`
 Funzioni per la manipolazione e l'elaborazione audio:
@@ -24,12 +27,12 @@ Funzioni relative al modello di machine learning:
 
 ```python
 # Import delle funzioni
-from utils import resolve_project_root
 from audio_utils import extract_mel_spectrogram
 from model_utils import load_keras_model, predict_file
 
 # Esempio di utilizzo
-project_root = resolve_project_root(__file__)
+import os
+project_root = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir))
 model = load_keras_model(project_root)
 cls, probs, sr, audio = predict_file(model, "path/to/audio.wav")
 ```

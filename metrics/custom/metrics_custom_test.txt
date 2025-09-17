@@ -1,0 +1,19 @@
+Classification Report (Test):
+                  precision    recall  f1-score   support
+
+ air_conditioner       0.66      0.91      0.76       100
+        car_horn       0.96      0.82      0.89        33
+children_playing       0.70      0.82      0.76       100
+        dog_bark       0.75      0.82      0.78       100
+        drilling       0.75      0.81      0.78       100
+   engine_idling       0.96      0.46      0.62        93
+        gun_shot       0.91      1.00      0.96        32
+      jackhammer       0.88      0.95      0.91        96
+           siren       0.82      0.60      0.69        83
+    street_music       0.88      0.80      0.84       100
+
+        accuracy                           0.79       837
+       macro avg       0.83      0.80      0.80       837
+    weighted avg       0.81      0.79      0.78       837
+
+Matrice di confusione (test) salvata in: d:\Uni\SE4AI\proj\metrics\custom\confusion_matrix_custom_test.png

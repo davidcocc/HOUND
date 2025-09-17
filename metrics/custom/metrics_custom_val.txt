@@ -1,0 +1,31 @@
+Tempo di addestramento: 11675.71 secondi
+Accuracy finale di training: 0.9971
+Accuracy finale di validation: 0.8309
+Loss finale di training: 0.6037
+Loss finale di validation: 1.0302
+
+Classification Report (Validation):
+                  precision    recall  f1-score   support
+
+ air_conditioner       0.72      0.42      0.53       100
+        car_horn       1.00      0.94      0.97        32
+children_playing       0.86      0.92      0.89       100
+        dog_bark       0.93      0.82      0.87       100
+        drilling       0.64      0.72      0.68       100
+   engine_idling       0.88      0.91      0.90        89
+        gun_shot       0.97      0.97      0.97        31
+      jackhammer       0.75      0.89      0.82        82
+           siren       0.95      1.00      0.98        82
+    street_music       0.83      0.95      0.88       100
+
+        accuracy                           0.83       816
+       macro avg       0.85      0.85      0.85       816
+    weighted avg       0.83      0.83      0.82       816
+
+Resource Usage:
+Average CPU Usage: 53.15%
+Average GPU Load: 19.00%
+Average GPU Memory: 11.14%
+Estimated Energy Consumption: 178.62 Wh
+Early Stopping at Epoch: 60/90
+Matrice di confusione (val) salvata in: d:\Uni\SE4AI\proj\metrics\custom\confusion_matrix_custom_val.png

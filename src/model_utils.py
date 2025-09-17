@@ -234,7 +234,7 @@ def get_model_summary(project_root: str, model_rel_path: str = os.path.join("mod
     model = load_keras_model(project_root, model_rel_path)
     model.summary()
 
-def evaluate_custom_vs_original(project_root: str, original_rel_path: str = os.path.join('model', 'UrbanSound8K.keras'),
+def evaluate_custom_vs_original(project_root: str, original_rel_path: str = os.path.join('model', 'UrbanSound8K.keras'), # TODO: make this more significant and useful, not just focus on accuracy
                                 custom_rel_path: str = os.path.join('custom_model', 'custom_UrbanSound8K.keras')):
     """
     Evaluate and compare original and custom models on test data.
