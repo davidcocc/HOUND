@@ -113,7 +113,49 @@ jobs:
         flake8 src/ --count --select=E9,F63,F7,F82 --show-source --statistics
         flake8 src/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
 
-  # Job 4: Publish Docker Image (only on main branch)
+  # Job 4: Unit tests with reports (HTML + Coverage XML)
+  unit-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install system libraries
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libsndfile1
+
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-cov pytest-html gradio
+
+    - name: Run unit tests and generate reports
+      run: |
+        pytest -q \
+          --maxfail=1 --disable-warnings \
+          --cov=src \
+          --cov-report=xml:coverage.xml \
+          --cov-report=term-missing \
+          --html=report.html --self-contained-html
+
+    - name: Upload test artifacts
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-artifacts
+        path: |
+          report.html
+          coverage.xml
+
+  # Job 5: Publish Docker Image (only on main branch)
   publish:
     runs-on: ubuntu-latest
     needs: [build-and-test, security-scan]
@@ -128,6 +170,9 @@ jobs:
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
 
     - name: Extract metadata
       id: meta
@@ -149,8 +194,6 @@ jobs:
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
 
     - name: Generate artifact attestation
       if: ${{ github.event_name != 'pull_request' }}

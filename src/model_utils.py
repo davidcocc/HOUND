@@ -13,7 +13,19 @@ from sklearn.metrics import (
 from sklearn.preprocessing import label_binarize
 import seaborn as sns
 
-from audio_utils import extract_mel_spectrogram, audio_augmentation, extract_mel_spectrogram_from_audio
+try:
+    # Prefer package-relative import when used as part of the src package
+    from .audio_utils import (
+        extract_mel_spectrogram,
+        audio_augmentation,
+        extract_mel_spectrogram_from_audio,
+    )
+except Exception:  # Fallback for direct script execution contexts
+    from audio_utils import (
+        extract_mel_spectrogram,
+        audio_augmentation,
+        extract_mel_spectrogram_from_audio,
+    )
 
 
 def ensure_metrics_directory():
