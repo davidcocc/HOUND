@@ -10,3 +10,9 @@ ipython==8.18.1
 jupyterlab==4.3.4
 scikit-learn==1.6.1
 seaborn==0.13.2
+psutil==6.0.0
+gputil==1.4.0
+pytest
+pytest-cov
+pytest-html
+gradio
