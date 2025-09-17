@@ -1,0 +1,50 @@
+---
+description: Rules for maintaining a clean, well-documented Gradio interface project
+globs: ["**/*.py", "tests/**/*.py"]
+alwaysApply: true
+---
+
+# CursorRules for Gradio Interface in Python
+
+## General Goals
+- Keep the implementation simple but complete: no unnecessary complexity.
+- Maintain an engineering-oriented structure with readability, modularity, and clarity.
+- Ensure consistency with the existing codebase style in this repository.
+
+## Gradio Interface Guidelines
+- The interface must allow:
+  - Uploading audio clips from the user.
+  - Selecting one of the available models via dropdown.
+  - Displaying the classification output clearly.
+- The UI should remain minimal and intuitive, yet captivating and should use a dark theme palette which has to keep in mind  of potential colorblind users.
+- Do not add features not required (e.g., advanced logging, databases, or unnecessary pipelines).
+
+## Code Style
+- Follow **PEP8** for formatting and naming.
+- Use clear, descriptive variable and function names.
+- Keep consistency with the existing project style.
+- Add **docstrings** for all public functions and modules.
+- Comment ONLY non-trivial parts of the code (e.g., audio preprocessing, prediction mapping).
+
+## Testing
+- Write **unit tests** for:
+  - Audio preprocessing functions.
+  - Classification logic (mock models if needed).
+  - Input/output handling functions for Gradio.
+- Do not test the Gradio UI itself, only the underlying logic.
+- Use `pytest` as the testing framework.
+
+## Linting and Quality
+- Ensure the code passes linting (`flake8`, `pylint`, or auto-formatting with `black`).
+- Avoid code smells such as overly long functions, duplication, or unused variables.
+- Split into multiple modules if necessary (`interface.py`, `models.py`, `utils.py`, `tests/`).
+
+## Documentation
+- Comment all important code blocks for clarity.
+- Update the README with:
+  - How to run the Gradio interface.
+  - How to run the tests.
+
+## Constraints
+- Do not introduce unnecessary dependencies beyond `gradio`, `pytest`, and the ones already used in the project.
+- Avoid hacks or temporary workarounds.

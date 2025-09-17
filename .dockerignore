@@ -28,7 +28,7 @@ Thumbs.db
 README.md
 *.md
 
-# Data (se non necessario in produzione)
+# Data
 data/
 augmented/
 metrics/
