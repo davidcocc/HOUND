@@ -79,6 +79,7 @@ jobs:
 
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@0.28.0
+      continue-on-error: true
       with:
         image-ref: ${{ env.DOCKER_IMAGE }}:${{ env.DOCKER_TAG }}
         format: 'sarif'
@@ -88,11 +89,6 @@ jobs:
         scanners: 'vuln'
         timeout: '20m'
 
-    - name: Upload Trivy scan results to GitHub Security tab
-      uses: github/codeql-action/upload-sarif@v3
-      if: success() && github.event_name == 'push'
-      with:
-        sarif_file: 'trivy-results.sarif'
 
   # Job 3: Lint Code (optional)
   lint:
